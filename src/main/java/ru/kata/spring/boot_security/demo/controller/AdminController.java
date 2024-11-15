@@ -11,6 +11,7 @@ import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.service.UserService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -38,18 +39,14 @@ public class AdminController {
     }
 
     @PostMapping("/add")
-    public String addUser(@ModelAttribute("user") User user) {
+    public String addUser(@ModelAttribute("user") User user, @RequestParam("rolesList") String[] selectedRoles) {
         Set<Role> roles = new HashSet<>();
-        if (user.getRoleNames() != null) {
-            for (String roleName : user.getRoleNames()) {
-                Role role = roleRepository.findRoleByName(roleName);
-                if (role != null) {
-                    roles.add(role);
-                }
-            }
+        if (selectedRoles != null) {
+            Arrays.stream(selectedRoles)
+                    .forEach(a -> roles.add(roleRepository.findRoleByName(a)));
         }
         user.setRoles(roles);
-        userService.saveUser(user.getUsername(), user.getEmail(), user.getPassword(), roles);
+        userService.saveUser(user.getUsername(), user.getEmail(), user.getPassword(), user.getRoles());
         return "redirect:/admin";
     }
 

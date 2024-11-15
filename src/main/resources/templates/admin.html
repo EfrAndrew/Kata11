@@ -66,7 +66,7 @@
     <input type="email" th:field="*{email}" placeholder="Email" required/>
     <input type="password" th:field="*{password}" placeholder="Пароль" required/>
     <label>Права:</label>
-    <select th:field="*{roleNames}" multiple>
+    <select th:name="rolesList" multiple>
         <option th:each="role : ${allRoles}" th:value="${role.name}"
                 th:text="${role.name}"></option>
     </select>
